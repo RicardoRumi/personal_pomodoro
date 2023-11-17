@@ -1,0 +1,10 @@
+XDG_RUNTIME_DIR=/run/user/0
+
+ 30 10-23 * * * /home/ricardo/scripts/run-as-me.sh >> /home/ricardo/scripts/desliga.log 2>&1
+ 30 0-8 * * * /home/ricardo/scripts/run-as-me.sh >> /home/ricardo/scripts/desliga.log 2>&1
+# * * * * * export DISPLAY=:0 && pgrep -x firefox > /dev/null || firefox &
+# * * * * * /home/ricardo/scripts/daily.sh
+
+@reboot nohup /home/ricardo/Documents/do-not-delete/Whisper-Voice-Transcription/start_transcription.sh &
+@reboot /home/ricardo/Documents/do-not-delete/set_default_mic.sh &
+
