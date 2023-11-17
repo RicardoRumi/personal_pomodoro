@@ -34,13 +34,12 @@ def grab():
         disp.ungrab_keyboard(X.CurrentTime)
 
 def main():
-    # Set the window position
     os.environ['SDL_VIDEO_WINDOW_POS'] = '0,0'
 
     pygame.init()
 
-    initial_volume = get_master_volume()  # Store initial volume
-    set_master_volume(0)  # Mute the sound
+    initial_volume = get_master_volume()
+    set_master_volume(0)
 
     monitors = get_monitors()
     if not monitors:
@@ -67,22 +66,31 @@ def main():
         screen.blit(text, text_rect)
         pygame.display.flip()
 
-    countdown_seconds = 10 * 1
+    start_time = datetime.datetime.now()
+    end_time = start_time + datetime.timedelta(minutes=30)
 
     with grab():
         running = True
-        while running and countdown_seconds >= 0:
+        while running:
+            current_time = datetime.datetime.now()
+            if current_time >= end_time:
+                break
+
+            time_left = end_time - current_time
+            seconds_left = time_left.total_seconds()
+            if seconds_left < 0:
+                break
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     running = False
 
-            display_countdown(countdown_seconds)
-            time.sleep(1)
-            countdown_seconds -= 1
+            display_countdown(int(seconds_left))
+            pygame.display.flip()
+            time.sleep(0.1)
 
-    set_master_volume(initial_volume)  # Restore the initial volume
+    set_master_volume(initial_volume)
 
-    # Check if current time is between midnight and 6 AM
     current_time = datetime.datetime.now()
     if 1 <= current_time.hour < 6:
         subprocess.call(["sudo", "/usr/bin/systemctl", "suspend"])
